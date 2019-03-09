@@ -6,29 +6,6 @@ const Neuron = synaptic.Neuron,
   Trainer = synaptic.Trainer,
   Architect = synaptic.Architect
 
-// function Perceptron(input, hidden, output)
-// {
-// 	// create the layers
-// 	const inputLayer = new Layer(input);
-// 	const hiddenLayer = new Layer(hidden);
-// 	const outputLayer = new Layer(output);
-
-// 	// connect the layers
-// 	inputLayer.project(hiddenLayer);
-// 	hiddenLayer.project(outputLayer);
-
-// 	// set the layers
-// 	this.set({
-// 		input: inputLayer,
-// 		hidden: [hiddenLayer],
-// 		output: outputLayer
-// 	});
-// }
-
-// extend the prototype chain
-// Perceptron.prototype = new Network();
-// Perceptron.prototype.constructor = Perceptron;
-
 var myNetwork = new Architect.Perceptron(2, 2, 1)
 var trainer = new Trainer(myNetwork)
 

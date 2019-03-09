@@ -10,7 +10,7 @@ class Routes extends Component {
   render() {
     return (
       <Switch>
-        <Route path="/" component={Analyzer} />
+        <Route exact path="/" component={Analyzer} />
       </Switch>
     )
   }
