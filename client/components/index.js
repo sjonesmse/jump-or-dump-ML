@@ -5,3 +5,4 @@
  */
 export {default as Navbar} from './navbar'
 export {default as Analyzer} from './analyzer'
+// export { default as NewChart } from './newchart'

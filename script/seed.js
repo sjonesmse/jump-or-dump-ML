@@ -1,5 +1,4 @@
 'use strict'
-const fs = require('fs')
 const db = require('../server/db')
 const {Skydiver} = require('../server/db/models')
 

@@ -17,7 +17,7 @@ router.get('/trainingSetInput', async (req, res, next) => {
   try {
     const skydivers = await Skydiver.findAll({
       where: {
-        ID: {
+        id: {
           [Op.lte]: 35000
         }
       },
@@ -41,7 +41,7 @@ router.get('/trainingSetOutput', async (req, res, next) => {
   try {
     const skydivers = await Skydiver.findAll({
       where: {
-        ID: {
+        id: {
           [Op.lte]: 35000
         }
       },
@@ -57,7 +57,7 @@ router.get('/testingSetInput', async (req, res, next) => {
   try {
     const skydivers = await Skydiver.findAll({
       where: {
-        ID: {
+        id: {
           [Op.gt]: 35000
         }
       },
@@ -81,7 +81,7 @@ router.get('/testingSetOutput', async (req, res, next) => {
   try {
     const skydivers = await Skydiver.findAll({
       where: {
-        ID: {
+        id: {
           [Op.gt]: 35000
         }
       },

@@ -1,13 +1,19 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {Button, Container, Form, Input, Select} from 'semantic-ui-react'
+import {Button, Container, Form, Loader} from 'semantic-ui-react'
 import {
-  addSkydiverThunk,
-  getSkydiverThunk,
-  getAllSkydiversThunk,
-  getTestSkydiversThunk,
-  getTrainSkydiversThunk
+  getTrainInputThunk,
+  getTrainOutputThunk,
+  getTestInputThunk,
+  getTestOutputThunk
 } from '../store/skydiver'
+// import { runAnalysis } from '../neuralnetwork'
+const synaptic = require('synaptic')
+const Trainer = synaptic.Trainer
+const Architect = synaptic.Architect
+
+const myNetwork = new Architect.Perceptron(6, 6, 6, 2)
+const trainer = new Trainer(myNetwork)
 
 class Analyzer extends Component {
   constructor(props) {
@@ -20,38 +26,93 @@ class Analyzer extends Component {
       jumps: 0,
       reserveRide: 0
     }
-    this.runAnalysis = this.runAnalysis.bind(this)
+    this.train = this.train.bind(this)
     this.handleTestClick = this.handleTestClick.bind(this)
     this.handleTrainClick = this.handleTrainClick.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
     this.handleChange = this.handleChange.bind(this)
   }
-  // need a function for training data set (tie to a button, generate a map of the error value decreasing)
-  // need a function for testing data set (are these diff?)
-  // need to be able to take inputs from a form and run them through the network to produce a response (yes/no, or risk level)
-  runAnalysis() {}
+
+  train() {
+    let inputArr = this.props.trainSetInput.map(elem => [
+      elem.age,
+      elem.gender,
+      elem.jumps,
+      elem.occupation,
+      elem.region,
+      elem.reserveRide
+    ])
+    let outputArr = this.props.trainSetOutput.map(elem => [
+      elem.incident,
+      elem.fatality
+    ])
+
+    let trainingSet = []
+
+    for (let i = 0; i < 10000; i++) {
+      let trainSetObj = {
+        input: inputArr[i],
+        output: outputArr[i]
+      }
+      trainingSet.push(trainSetObj)
+    }
+
+    trainer.train(trainingSet, {
+      rate: 0.001,
+      iterations: 2000,
+      error: 0.05,
+      shuffle: true,
+      log: 500,
+      cost: Trainer.cost.CROSS_ENTROPY
+    })
+    console.log('training complete!')
+  }
 
   handleTestClick() {
-    this.props.getTestSet()
+    this.props.getTestInput() //returns all the input attributes for test set
+    this.props.getTestOutput() //returns all the output attributes for test set
   }
   handleTrainClick() {
-    this.props.getTrainSet()
+    this.props.getTrainInput() //returns all the input attributes for train set
+    this.props.getTrainOutput() //returns all the output attributes for train set
   }
 
   handleSubmit() {
     console.log('this is what you get with submit', this.state)
     const body = this.state
+    const dataInput = [
+      body.age,
+      body.gender,
+      body.jumps,
+      body.occupation,
+      body.region,
+      body.reserveRide
+    ]
+    console.log(dataInput)
+    const results = myNetwork.activate(dataInput)
+    console.log('results', results)
+    if (results[0] < 0.02 && results[1] < 0.002) {
+      console.log('RISK LEVEL LOW')
+    } else if (results[0] < 0.05 && results[1] < 0.005) {
+      console.log('RISK LEVEL MED')
+    } else if (results[0] >= 0.05 || results[1] >= 0.005) {
+      console.log('RISK LEVEL HIGH')
+    }
   }
 
   handleChange(event, {name, value}) {
-    this.setState({
-      [name]: parseInt(value)
-    })
+    if (value === undefined) {
+      this.setState({
+        reserveRide: 1
+      })
+    } else {
+      this.setState({
+        [name]: parseInt(value)
+      })
+    }
   }
 
   render() {
-    const {age, gender, occupation, region, jumps, reserveRide} = this.state
-
     const genderOps = [
       {key: 'm', text: 'Male', value: 1}, //double check these values
       {key: 'f', text: 'Female', value: 0}
@@ -69,8 +130,9 @@ class Analyzer extends Component {
 
     return (
       <Container>
-        <Button onClick={this.handleTrainClick}>Train The Brain!</Button>
-        <Button onClick={this.handleTestClick}>Run Test Analysis</Button>
+        <Button onClick={this.handleTrainClick}>Collect Training Data</Button>
+        <Button onClick={this.handleTestClick}>Collect Testing Data</Button>
+        <Button onClick={this.train}>Train</Button>
 
         <Form onSubmit={this.handleSubmit}>
           <Form.Group widths="equal">
@@ -83,6 +145,7 @@ class Analyzer extends Component {
             />
             <Form.Select
               fluid
+              name="gender"
               label="Gender"
               options={genderOps}
               placeholder="Gender"
@@ -90,6 +153,7 @@ class Analyzer extends Component {
             />
             <Form.Select
               fluid
+              name="occupation"
               label="Occupation"
               options={occupationOps}
               placeholder="Occupation"
@@ -97,6 +161,7 @@ class Analyzer extends Component {
             />
             <Form.Select
               fluid
+              name="region"
               label="Region"
               options={regionOps}
               placeholder="Region"
@@ -110,11 +175,10 @@ class Analyzer extends Component {
               onChange={this.handleChange}
             />
           </Form.Group>
-          <Form.Radio
+          <Form.Checkbox
             label="Have you had a reserve ride this year?"
             name="reserveRide"
-            value="1"
-            checked={reserveRide === '1'}
+            // value='1'
             onChange={this.handleChange}
           />
           <Form.Button>Jump or Dump?</Form.Button>
@@ -128,18 +192,20 @@ const mapStateToProps = state => {
   return {
     selectedSkydiver: state.skydiver.selectedSkydiver,
     skydivers: state.skydiver.skydivers,
-    trainSet: state.skydiver.trainSet,
-    testSet: state.skydiver.testSet
+    trainSetInput: state.skydiver.trainSetInput,
+    trainSetOutput: state.skydiver.trainSetOutput,
+    testSetInput: state.skydiver.testSetInput,
+    testSetOutput: state.skydiver.testSetOutput
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    getAllSkydivers: () => dispatch(getAllSkydiversThunk()),
-    getSkydiver: skydiver => dispatch(getSkydiverThunk(skydiver)),
-    addSkydiver: skydiver => dispatch(addSkydiverThunk(skydiver)),
-    getTestSet: () => dispatch(getTestSkydiversThunk()),
-    getTrainSet: () => dispatch(getTrainSkydiversThunk())
+    getTestInput: () => dispatch(getTestInputThunk()),
+    getTestOutput: () => dispatch(getTestOutputThunk()),
+    getTrainInput: () => dispatch(getTrainInputThunk()),
+    getTrainOutput: () => dispatch(getTrainOutputThunk())
+    // runAnalysisSet: (input, output) => dispatch(runAnalysis(input, output))
   }
 }
 
