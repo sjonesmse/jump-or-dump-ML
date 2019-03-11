@@ -1,12 +1,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {Button, Container, Form, Icon, Table, Segment} from 'semantic-ui-react'
-import {
-  getTrainInputThunk,
-  getTrainOutputThunk,
-  getTestInputThunk,
-  getTestOutputThunk
-} from '../store/skydiver'
+import {Button, Container, Form, Icon, Table} from 'semantic-ui-react'
+import {getTrainInputThunk, getTrainOutputThunk} from '../store/skydiver'
 
 const synaptic = require('synaptic')
 const Trainer = synaptic.Trainer
@@ -30,7 +25,6 @@ class Analyzer extends Component {
       error: 0,
       iterations: 0,
       rate: 0,
-      results: [],
       riskLevel: ''
     }
     this.train = this.train.bind(this)
@@ -111,8 +105,6 @@ class Analyzer extends Component {
     ]
     console.log(dataInput)
     let results = myNetwork.activate(dataInput)
-    // let incidentRisk = results[0] * 1000000 //50,000
-    // let deathRisk = results[1] * 1000000 //1,000
 
     console.log('results', results)
     if (results[0] < 0.055 && results[1] < 0.00066) {
