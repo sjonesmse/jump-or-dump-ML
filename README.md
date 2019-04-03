@@ -16,7 +16,7 @@ Synaptic.js is a JavaScript library that provides the architecture and structure
 
 ## How to Use 
 
-1. Navigate [here](http://http://jump-or-dump.herokuapp.com/) to view the page.
+1. Navigate [here](http://jump-or-dump.herokuapp.com/) to view the page.
 2. Open the Dev Console in your browser by pressuring Ctrl + Shift + J (or CMD + Shift + J on MAC) to observe training if desired. Training takes some time, so please be patient.
 3. Press "Collect Training Data". This will pull the data from the database into the web app.
 4. Press "Train." The app will train on the data collected, and when finished will report the results from training in the lower portion of the screen.
