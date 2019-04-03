@@ -1,6 +1,14 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {Button, Container, Form, Icon, Table} from 'semantic-ui-react'
+import {
+  Button,
+  Container,
+  Form,
+  Icon,
+  Table,
+  Card,
+  Image
+} from 'semantic-ui-react'
 import {getTrainInputThunk, getTrainOutputThunk} from '../store/skydiver'
 
 const synaptic = require('synaptic')
@@ -178,6 +186,12 @@ class Analyzer extends Component {
 
     return (
       <Container>
+        <Card centered>
+          <Image src="gif.gif" />
+        </Card>
+        {/* <div>
+          <img src='gif.gif' />
+        </div> */}
         <Button onClick={this.handleTrainClick}>Collect Training Data</Button>
         <Button onClick={this.train}>Train</Button>
 
@@ -286,11 +300,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    getTestInput: () => dispatch(getTestInputThunk()),
-    getTestOutput: () => dispatch(getTestOutputThunk()),
     getTrainInput: () => dispatch(getTrainInputThunk()),
     getTrainOutput: () => dispatch(getTrainOutputThunk())
-    // runAnalysisSet: (input, output) => dispatch(runAnalysis(input, output))
   }
 }
 

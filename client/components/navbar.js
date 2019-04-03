@@ -1,14 +1,14 @@
 import React from 'react'
-import {Link} from 'react-router-dom'
+// import {Link} from 'react-router-dom'
 
 const Navbar = () => (
   <div>
     <h1>Jump or Dump - Skydiving Insurance Analyzer</h1>
-    <nav>
+    {/* <nav>
       <div>
         <Link to="/">Home</Link>
       </div>
-    </nav>
+    </nav> */}
     <hr />
   </div>
 )
