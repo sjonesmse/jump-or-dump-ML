@@ -33,6 +33,7 @@ class Analyzer extends Component {
       error: 0,
       iterations: 0,
       rate: 0,
+      results: [],
       riskLevel: ''
     }
     this.train = this.train.bind(this)
@@ -57,7 +58,7 @@ class Analyzer extends Component {
 
     let trainingSet = []
 
-    for (let i = 0; i < 20000; i++) {
+    for (let i = 0; i < 10000; i++) {
       let trainSetObj = {
         input: inputArr[i],
         output: outputArr[i]
@@ -113,6 +114,8 @@ class Analyzer extends Component {
     ]
     console.log(dataInput)
     let results = myNetwork.activate(dataInput)
+    // let incidentRisk = results[0] * 1000000 //50,000
+    // let deathRisk = results[1] * 1000000 //1,000
 
     console.log('results', results)
     if (results[0] < 0.055 && results[1] < 0.00066) {
